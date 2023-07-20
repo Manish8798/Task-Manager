@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     start: "5%",
     top: "10%",
-    padding: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
     backgroundColor: "#EAF0FF",
     borderRadius: 20,
     color: 'black'
