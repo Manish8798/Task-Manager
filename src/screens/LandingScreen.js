@@ -5,7 +5,7 @@ import {Colors} from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const LandingScreen = () => {
+const LandingScreen = props => {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#EAF0FF', '#868BFE']} style={styles.gradient}>
@@ -34,7 +34,7 @@ const LandingScreen = () => {
               name="arrow-forward-circle-outline"
               size={32}
               color={'white'}
-              onPress={() => console.log('Manish')}
+              onPress={() => props.navigation.navigate('SignupScreen')}
             />
           </View>
         </View>
