@@ -10,6 +10,7 @@ const LandingScreen = props => {
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#EAF0FF', '#868BFE']} style={styles.gradient}>
         <View style={styles.topView}>
+          <Text style={styles.titleText}>TASKOO</Text>
           <Image
             style={styles.image}
             source={require('../../assets/landing.png')}
@@ -88,5 +89,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 5,
   },
+  titleText: {
+    position: 'absolute',
+    fontSize: 16,
+    fontWeight: 'bold',
+    start: "5%",
+    top: "10%",
+    padding: 10,
+    backgroundColor: "#EAF0FF",
+    borderRadius: 20,
+    color: 'black'
+  }
 });
 export default LandingScreen;

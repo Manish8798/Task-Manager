@@ -90,7 +90,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     textAlign: 'center',
-    color: '#D9D9D9'
+    color: '#D9D9D9',
+    fontFamily: 'Poppins-Regular',
   }
 });
 
