@@ -46,7 +46,7 @@ const Home = props => {
       title: text.title,
       description: text.description,
       time: getCurrentLocalTime(),
-      status: 'incomplete'
+      status: 'incomplete',
     };
     tasks.push(task);
     setIsCreateClicked(!isCreateClicked);
@@ -64,10 +64,9 @@ const Home = props => {
   const handleTextInputLayout = () => {
     // Set the cursor position to the beginning when the TextInput layout is ready
     if (textInputRef.current) {
-      textInputRef.current.setNativeProps({ selection: { start: 0, end: 0 } });
+      textInputRef.current.setNativeProps({selection: {start: 0, end: 0}});
     }
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -119,20 +118,22 @@ const Home = props => {
                       <ConsistencyGraph />
                       {tasks.map((val, i) => {
                         return (
-                          <View key={i} style={styles.itemView}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                              }}>
-                              <Text style={styles.itemText}>{val.title}</Text>
-                              <Image
-                                source={require('../../assets/notebook.png')}
-                              />
+                          <TouchableWithoutFeedback key={i} onPress={() => console.log("Card")}>
+                            <View style={styles.itemView}>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                }}>
+                                <Text style={styles.itemText}>{val.title}</Text>
+                                <Image
+                                  source={require('../../assets/notebook.png')}
+                                />
+                              </View>
+                              <Text>{val.time}</Text>
                             </View>
-                            <Text>{val.time}</Text>
-                          </View>
+                          </TouchableWithoutFeedback>
                         );
                       })}
                     </View>
@@ -141,7 +142,7 @@ const Home = props => {
               </View>
             )}
             {isCreateClicked && (
-              <View style={styles.formContainer}>
+              <ScrollView style={styles.formContainer}>
                 <Input
                   containerStyle={styles.inputContainer}
                   style={styles.input}
@@ -152,14 +153,22 @@ const Home = props => {
                   placeholder="Title"
                 />
                 <View style={styles.formatContainer}>
-                  <MaterialIcons name="format-bold" size={32} />
+                  {[
+                    'format-bold',
+                    'format-italic',
+                    'format-underline',
+                    'format-line-spacing',
+                  ].map((name, i) => (
+                    <MaterialIcons key={i} name={name} size={32} />
+                  ))}
+                  {/* <MaterialIcons name="format-bold" size={32} />
                   <MaterialIcons name="format-italic" size={32} />
                   <MaterialIcons name="format-underline" size={32} />
-                  <MaterialIcons name="format-line-spacing" size={32} />
+                  <MaterialIcons name="format-line-spacing" size={32} /> */}
                 </View>
                 <Input
-                 ref={textInputRef}
-                 onLayout={handleTextInputLayout}
+                  ref={textInputRef}
+                  onLayout={handleTextInputLayout}
                   containerStyle={styles.inputContainer}
                   style={styles.descInput}
                   inputStyle={styles.inputStyle}
@@ -169,9 +178,16 @@ const Home = props => {
                   multiline={true}
                 />
                 <View style={[styles.formatContainer, {width: '80%'}]}>
-                  <Ionicons name="stopwatch-outline" size={32} />
+                  {[
+                    'stopwatch-outline',
+                    'briefcase-outline',
+                    'body-outline',
+                  ].map((name, i) => (
+                    <Ionicons key={i} name={name} size={32} />
+                  ))}
+                  {/* <Ionicons name="stopwatch-outline" size={32} />
                   <Ionicons name="briefcase-outline" size={32} />
-                  <Ionicons name="body-outline" size={32} />
+                  <Ionicons name="body-outline" size={32} /> */}
                 </View>
                 <Button
                   title={'CREATE'}
@@ -188,7 +204,7 @@ const Home = props => {
                   }}
                   onPress={() => handleCreatePress('save')}
                 />
-              </View>
+              </ScrollView>
             )}
           </View>
         </LinearGradient>
@@ -240,7 +256,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '80%',
-    height: H(8),
+    height: H(7),
     padding: 20,
     alignSelf: 'center',
     backgroundColor: 'white',
@@ -249,10 +265,8 @@ const styles = StyleSheet.create({
     borderColor: '#E3E3E3',
     borderWidth: 1,
   },
-  inputContainer: {
-  },
-  inputStyle: {
-  },
+  inputContainer: {},
+  inputStyle: {},
   inputContainerStyle: {
     borderColor: 'transparent',
   },
@@ -262,7 +276,7 @@ const styles = StyleSheet.create({
   },
   descInput: {
     width: '80%',
-    height: H(25),
+    height: H(35),
     paddingHorizontal: 20,
     alignSelf: 'center',
     backgroundColor: 'white',
@@ -271,7 +285,7 @@ const styles = StyleSheet.create({
     borderColor: '#E3E3E3',
     borderWidth: 1,
     textAlignVertical: 'top',
-    paddingVertical: 40
+    paddingVertical: 35,
   },
   formatContainer: {
     borderRadius: 40,
@@ -286,7 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     width: '55%',
     alignSelf: 'center',
-    height: H(8)
+    height: H(7),
   },
   listContainer: {
     alignSelf: 'center',
@@ -295,8 +309,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginTop: H(2),
     borderRadius: 20,
-    padding: 10,
-    paddingHorizontal: 20,
+    paddingVertical: H(1),
+    paddingHorizontal: W(5),
   },
   itemText: {
     fontSize: 24,
