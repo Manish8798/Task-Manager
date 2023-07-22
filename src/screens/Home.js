@@ -143,6 +143,7 @@ const Home = props => {
             )}
             {isCreateClicked && (
               <ScrollView style={styles.formContainer}>
+               
                 <Input
                   containerStyle={styles.inputContainer}
                   style={styles.input}
@@ -159,7 +160,7 @@ const Home = props => {
                     'format-underline',
                     'format-line-spacing',
                   ].map((name, i) => (
-                    <MaterialIcons key={i} name={name} size={32} />
+                    <MaterialIcons key={i} name={name} size={32} onPress={() => console.log(name)} />
                   ))}
                   {/* <MaterialIcons name="format-bold" size={32} />
                   <MaterialIcons name="format-italic" size={32} />
@@ -277,15 +278,15 @@ const styles = StyleSheet.create({
   descInput: {
     width: '80%',
     height: H(35),
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     alignSelf: 'center',
     backgroundColor: 'white',
     borderRadius: 20,
-    marginTop: -H(2),
+    marginTop: -H(5),
     borderColor: '#E3E3E3',
     borderWidth: 1,
     textAlignVertical: 'top',
-    paddingVertical: 35,
+    paddingVertical: 50,
   },
   formatContainer: {
     borderRadius: 40,
