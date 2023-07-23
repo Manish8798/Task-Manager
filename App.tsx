@@ -40,11 +40,13 @@ const App = () => {
           headerShown: false,
         }}>
         {!isSignedIn ? (
+          <>
           <Stack.Screen name="LandingScreen" component={LandingScreen} />
+          <Stack.Screen name="HomeScreen" component={Home} />
+          </>
         ) : (
           <Stack.Screen name="HomeScreen" component={Home} />
         )}
-
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
       </Stack.Navigator>
     </NavigationContainer>

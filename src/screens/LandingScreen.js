@@ -7,6 +7,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LandingScreen = props => {
 
+  const checkSignInStatus = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      console.log(accessToken?.token, 'accessToken');
+      if(accessToken?.token) {
+        props.navigation.navigate("HomeScreen");
+      } else {
+        props.navigation.navigate('SignupScreen')
+      }
+    } catch (error) {
+      console.error('Error checking sign-in status:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#EAF0FF', '#868BFE']} style={styles.gradient}>
@@ -26,9 +40,9 @@ const LandingScreen = props => {
             backgroundColor: 'white',
             alignSelf: 'baseline',
             alignSelf: 'center',
-            padding: 12,
+            padding: 14,
             marginTop: -H(2),
-            borderRadius: H(5),
+            borderRadius: H(7),
           }}>
           <View style={styles.roundBtn}>
             <Ionicons
@@ -36,7 +50,7 @@ const LandingScreen = props => {
               name="arrow-forward-circle-outline"
               size={32}
               color={'white'}
-              onPress={() => props.navigation.navigate('SignupScreen')}
+              onPress={() => checkSignInStatus()}
             />
           </View>
         </View>
@@ -81,11 +95,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   roundBtn: {
-    height: H(6),
-    width: W(12),
+    height: H(7),
+    width: H(7),
     backgroundColor: 'red',
     alignSelf: 'center',
-    borderRadius: H(6) / 2,
+    borderRadius: H(7) / 2,
     justifyContent: 'center',
     alignSelf: 'center',
     padding: 5,

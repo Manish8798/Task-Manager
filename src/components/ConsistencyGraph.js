@@ -8,8 +8,8 @@ import {H} from '../../util/Dimension';
 
 const ConsistencyGraph = () => {
   // Sample data: Replace this with your actual data of completed and pending tasks per day
-  const completedTasks = [3, 5, 2, 7, 4, 6, 3];
-  const pendingTasks = [1, 3, 2, 4, 5, 3, 2];
+  const completedTasks = [3, 5, 2, 7, 4, 0, 0];
+  const pendingTasks = [1, 3, 2, 4, 5, 0, 0];
 
   // Labels for X-axis (days of the week)
   const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
