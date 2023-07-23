@@ -100,7 +100,8 @@ const styles = StyleSheet.create({
     color: Colors.SubText,
     alignSelf: 'flex-start',
     paddingBottom: H(2),
-    paddingStart: 10
+    paddingStart: 10,
+    fontFamily: 'Poppins-Regular'
   },
 });
 
