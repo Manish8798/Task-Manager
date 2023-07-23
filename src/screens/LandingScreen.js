@@ -1,11 +1,33 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
 import {H, W, dimensions} from '../../util/Dimension';
-import {Colors} from '../../util/Constant';
+import {Colors, getAccessToken} from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LandingScreen = props => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    checkSignInStatus();
+  }, []);
+
+  const checkSignInStatus = async () => {
+    try {
+      // Check if the user is signed in by verifying a token or other relevant data
+      const accessToken = await getAccessToken();
+      console.log(accessToken?.token, 'accessToken');
+      if (accessToken?.token) {
+        setIsSignedIn(true);
+        props.navigation.navigate('HomeScreen');
+      } else {
+        setIsSignedIn(false);
+      }
+    } catch (error) {
+      console.error('Error checking sign-in status:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#EAF0FF', '#868BFE']} style={styles.gradient}>
@@ -93,13 +115,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 16,
     fontWeight: 'bold',
-    start: "5%",
-    top: "10%",
+    start: '5%',
+    top: '10%',
     paddingHorizontal: 15,
     paddingVertical: 5,
-    backgroundColor: "#EAF0FF",
+    backgroundColor: '#EAF0FF',
     borderRadius: 20,
-    color: 'black'
-  }
+    color: 'black',
+  },
 });
 export default LandingScreen;

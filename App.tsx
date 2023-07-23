@@ -1,5 +1,4 @@
-import React from 'react';
-import {View, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingScreen from './src/screens/LandingScreen';
@@ -16,8 +15,8 @@ const App = () => {
           headerShown: false,
         }}>
         <Stack.Screen name="LandingScreen" component={LandingScreen} />
-        <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="HomeScreen" component={Home} />
+        <Stack.Screen name="SignupScreen" component={SignupScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

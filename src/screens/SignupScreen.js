@@ -8,13 +8,17 @@ import {
   Keyboard,
 } from 'react-native';
 import {H, W, dimensions} from '../../util/Dimension';
-import {Colors} from '../../util/Constant';
+import {Colors, getAccessToken, storeAccessToken} from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import {Input, Button} from '@rneui/themed';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 const SignupScreen = props => {
-  const [text, setText] = React.useState('');
+  const [text, setText] = React.useState({
+    phone: '',
+    otp: '',
+    name: '',
+  });
   const [isPressOTP, setIsPressOTP] = React.useState(1);
 
   const handleTouchablePress = () => {
@@ -22,8 +26,12 @@ const SignupScreen = props => {
     Keyboard.dismiss();
   };
 
-  const handleTextChange = inputText => {
-    setText(inputText);
+  const handleTextChange = (inputText, type) => {
+    setText({
+      phone: type == 'phone' ? inputText : text.phone,
+      otp: type == 'otp' ? inputText : text.otp,
+      name: type == 'name' ? inputText : text.name,
+    });
   };
 
   const highlightedText = () => (
@@ -32,17 +40,92 @@ const SignupScreen = props => {
     </Text>
   );
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        'http://13.126.244.224/api/verification',
+        {
+          params: {
+            phone: `+91${text.phone}`,
+            signature: 'xyz',
+          },
+        },
+      );
+
+      // Process the response data here
+      console.log('Response data:', response.data);
+      if (response.data.code == '200') {
+        setIsPressOTP(state => state + 1);
+      }
+    } catch (error) {
+      // Handle errors here
+      console.error('Error:', error);
+    }
+  };
+
+  const postData = async () => {
+    try {
+      const response = await axios.post(
+        'http://13.126.244.224/api/verification',
+        {
+          phone: `+91${text.phone}`,
+          code: 1567,
+        },
+      );
+
+      // Process the response data here
+      console.log('Response data:', response?.data);
+      if (response?.data?.code == '200') {
+        setIsPressOTP(state => state + 1);
+        const data = {
+          phone: text.phone,
+          token: response?.data?.data?.token,
+        };
+        const jsonString = JSON.stringify(data);
+        storeAccessToken(jsonString);
+      }
+    } catch (error) {
+      // Handle errors here
+      console.error('Error:', error);
+    }
+  };
+
+  const makePostRequest = async () => {
+    try {
+      const accessToken = await getAccessToken();
+
+      const url = 'http://13.126.244.224/api/user';
+      const data = {
+        phone: `+91${text.phone}`,
+        name: text?.name,
+      };
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken?.token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const response = await axios.post(url, data, config);
+      props.navigation.navigate('HomeScreen');
+      console.log('Response data:', response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const onPressOTP = () => {
     console.log('onPressOTP', isPressOTP);
     switch (isPressOTP) {
       case 1:
-        setIsPressOTP(state => state + 1);
+        fetchData();
         break;
       case 2:
-        setIsPressOTP(state => state + 1);
+        postData();
         break;
       case 3:
-        props.navigation.navigate('HomeScreen');
+        makePostRequest();
         break;
     }
   };
@@ -60,8 +143,23 @@ const SignupScreen = props => {
                 style={styles.input}
                 inputStyle={styles.inputStyle}
                 inputContainerStyle={styles.inputContainerStyle}
-                value={text}
-                onChangeText={handleTextChange}
+                value={
+                  isPressOTP == 1
+                    ? text.phone
+                    : isPressOTP == 2
+                    ? text.otp
+                    : text.name
+                }
+                onChangeText={text =>
+                  handleTextChange(
+                    text,
+                    isPressOTP == 1
+                      ? 'phone'
+                      : isPressOTP == 2
+                      ? 'otp'
+                      : 'name',
+                  )
+                }
                 label={
                   isPressOTP == 1
                     ? 'Phone'
@@ -142,10 +240,11 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     height: 50,
-    padding: 10,
+    paddingVertical: 10,
     alignSelf: 'center',
     backgroundColor: '#EAF0FF',
     borderRadius: 20,
+    paddingHorizontal: 20,
   },
   inputContainer: {},
   inputStyle: {},

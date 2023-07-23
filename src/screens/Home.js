@@ -10,12 +10,13 @@ import {
   ScrollView,
 } from 'react-native';
 import {H, W, dimensions} from '../../util/Dimension';
-import {Colors, getCurrentLocalTime} from '../../util/Constant';
+import {Colors, getAccessToken, getCurrentLocalTime} from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import {Input, Button} from '@rneui/themed';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConsistencyGraph from '../components/ConsistencyGraph';
+import axios from 'axios';
 
 const Home = props => {
   const [isCreateClicked, setIsCreateClicked] = React.useState(false);
@@ -24,6 +25,7 @@ const Home = props => {
     title: '',
     description: '',
   });
+  const [username, setUsername] = React.useState('');
   const handleTouchablePress = () => {
     // Dismiss the keyboard when the user taps outside the TextInput
     Keyboard.dismiss();
@@ -68,6 +70,30 @@ const Home = props => {
     }
   };
 
+  React.useEffect(() => {
+    makeGetRequest();
+  }, []);
+
+  const makeGetRequest = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      // console.log(accessToken);
+      const url = 'http://13.126.244.224/api/user';
+      const phone = encodeURIComponent(`+91${accessToken?.phone}`);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken?.token}`,
+        },
+      };
+
+      const response = await axios.get(`${url}?phone=${phone}`, config);
+      setUsername(response?.data?.data?.user?.username);
+      console.log('Response data:', response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={handleTouchablePress}>
@@ -81,7 +107,7 @@ const Home = props => {
             }}>
             <Image source={require('../../assets/avatar.png')} />
             <Text style={styles.signupText}>
-              {isCreateClicked ? 'New Task' : 'Rohit Chu'}
+              {isCreateClicked ? 'New Task' : username}
             </Text>
           </View>
           <View style={styles.createView}>
@@ -118,7 +144,9 @@ const Home = props => {
                       <ConsistencyGraph />
                       {tasks.map((val, i) => {
                         return (
-                          <TouchableWithoutFeedback key={i} onPress={() => console.log("Card")}>
+                          <TouchableWithoutFeedback
+                            key={i}
+                            onPress={() => console.log('Card')}>
                             <View style={styles.itemView}>
                               <View
                                 style={{
@@ -143,7 +171,6 @@ const Home = props => {
             )}
             {isCreateClicked && (
               <ScrollView style={styles.formContainer}>
-               
                 <Input
                   containerStyle={styles.inputContainer}
                   style={styles.input}
@@ -160,7 +187,12 @@ const Home = props => {
                     'format-underline',
                     'format-line-spacing',
                   ].map((name, i) => (
-                    <MaterialIcons key={i} name={name} size={32} onPress={() => console.log(name)} />
+                    <MaterialIcons
+                      key={i}
+                      name={name}
+                      size={32}
+                      onPress={() => console.log(name)}
+                    />
                   ))}
                   {/* <MaterialIcons name="format-bold" size={32} />
                   <MaterialIcons name="format-italic" size={32} />
