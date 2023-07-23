@@ -14,6 +14,7 @@ import {
   Colors,
   getAccessToken,
   getCurrentFormattedDate,
+  getDayNumber,
 } from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import {Input, Button} from '@rneui/themed';
@@ -32,6 +33,10 @@ const Home = props => {
   const [username, setUsername] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [accessToken, setAccessToken] = React.useState('');
+  const [completedTasks, setCompletedTasks] = React.useState([
+    0, 0, 0, 0, 0, 0, 0,
+  ]);
+  const [pendingTasks, setPendingTasks] = React.useState([0, 0, 0, 0, 0, 0, 0]);
   const handleTouchablePress = () => {
     // Dismiss the keyboard when the user taps outside the TextInput
     Keyboard.dismiss();
@@ -56,6 +61,13 @@ const Home = props => {
     }
   };
 
+  const handleChangeValueAtIndex = (index, newValue) => {
+    // Create a copy of the original array to avoid directly mutating the state
+    const newData = [...pendingTasks];
+    newData[index] = newValue;
+    setPendingTasks(newData);
+  };
+
   const saveTask = async () => {
     try {
       const accessToken = await getAccessToken();
@@ -74,12 +86,14 @@ const Home = props => {
         },
       };
       const response = await axios.post(url, data, config);
+      const dayNumber = getDayNumber();
+      handleChangeValueAtIndex(dayNumber - 1, pendingTasks[dayNumber] + 1);
       setIsCreateClicked(!isCreateClicked);
       const phoneUri = encodeURIComponent(phone);
       await getAllTasks(phoneUri, accessToken?.token);
       // console.log('Response data:', response.data);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Save Task Error:', error);
     }
   };
 
@@ -202,7 +216,10 @@ const Home = props => {
                     </>
                   ) : (
                     <View style={styles.listContainer}>
-                      <ConsistencyGraph />
+                      <ConsistencyGraph
+                        pendingTasks={pendingTasks}
+                        completedTasks={completedTasks}
+                      />
                       {tasks.map((val, i) => {
                         return (
                           <TouchableWithoutFeedback

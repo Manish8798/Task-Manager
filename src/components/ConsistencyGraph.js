@@ -6,10 +6,11 @@ import {LineChart} from 'react-native-chart-kit';
 import {Colors} from '../../util/Constant';
 import {H} from '../../util/Dimension';
 
-const ConsistencyGraph = () => {
+const ConsistencyGraph = props => {
   // Sample data: Replace this with your actual data of completed and pending tasks per day
-  const completedTasks = [3, 5, 2, 7, 4, 0, 0];
-  const pendingTasks = [1, 3, 2, 4, 5, 0, 0];
+  const completedTasks = props?.completedTasks;
+  const pendingTasks = props?.pendingTasks;
+  // console.log(completedTasks, pendingTasks);
 
   // Labels for X-axis (days of the week)
   const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
   },
   chart: {
     marginVertical: 10,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   headText: {
     fontSize: 32,
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingBottom: H(2),
     paddingStart: 10,
-    fontFamily: 'Poppins-Regular'
+    fontFamily: 'Poppins-Regular',
   },
 });
 

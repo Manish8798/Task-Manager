@@ -48,3 +48,9 @@ export function getCurrentFormattedDate() {
   const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedDate;
 }
+
+export const getDayNumber = () => {
+  const date = new Date();
+  const dayNumber = date.getDay();
+  return dayNumber;
+};
