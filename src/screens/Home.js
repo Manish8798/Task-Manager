@@ -10,7 +10,11 @@ import {
   ScrollView,
 } from 'react-native';
 import {H, W, dimensions} from '../../util/Dimension';
-import {Colors, getAccessToken, getCurrentLocalTime} from '../../util/Constant';
+import {
+  Colors,
+  getAccessToken,
+  getCurrentFormattedDate,
+} from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import {Input, Button} from '@rneui/themed';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -26,15 +30,25 @@ const Home = props => {
     description: '',
   });
   const [username, setUsername] = React.useState('');
+  const [phone, setPhone] = React.useState('');
+  const [accessToken, setAccessToken] = React.useState('');
   const handleTouchablePress = () => {
     // Dismiss the keyboard when the user taps outside the TextInput
     Keyboard.dismiss();
   };
 
+  React.useEffect(() => {
+    const unsubscribe = props?.navigation.addListener('focus', () => {
+      makeGetRequest();
+    });
+    // Clean up the listener when the component is unmounted
+    return unsubscribe;
+  }, [isCreateClicked]);
+
   const handleCreatePress = type => {
     switch (type) {
       case 'create':
-        setIsCreateClicked(!isCreateClicked);
+        setIsCreateClicked(true);
         break;
       case 'save':
         saveTask();
@@ -42,17 +56,66 @@ const Home = props => {
     }
   };
 
-  const saveTask = () => {
-    if (text.title.trim() == '') return;
-    const task = {
-      title: text.title,
-      description: text.description,
-      time: getCurrentLocalTime(),
-      status: 'incomplete',
-    };
-    tasks.push(task);
-    setIsCreateClicked(!isCreateClicked);
+  const saveTask = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      const url = 'http://13.126.244.224/api/task';
+      const data = {
+        phone: phone,
+        name: text?.title,
+        details: text?.description,
+        category: 'work',
+        expiry_date: getCurrentFormattedDate(),
+      };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken?.token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+      const response = await axios.post(url, data, config);
+      setIsCreateClicked(!isCreateClicked);
+      const phoneUri = encodeURIComponent(phone);
+      await getAllTasks(phoneUri, accessToken?.token);
+      // console.log('Response data:', response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
+
+  const getAllTasks = async (phone, accessToken) => {
+    console.log('getAllTasks');
+    try {
+      const url = 'http://13.126.244.224/api/task';
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(`${url}?phone=${phone}`, config);
+      // Process the response data here
+      console.log('getAllTasks data:', response.data);
+      if (response.data.code == '200') {
+        setTasks(response?.data?.data?.task);
+      }
+    } catch (error) {
+      // Handle errors here
+      console.error('Error:', error);
+    }
+  };
+
+  // const saveTask = async () => {
+  //   if (text.title.trim() == '') return;
+  //   const task = {
+  //     phone: phone,
+  //     name: text?.title,
+  //     details: text?.description,
+  //     category: 'work',
+  //     expiry_date: getCurrentFormattedDate(),
+  //   };
+  //   console.log(task);
+  //   await makePostRequest(task);
+  // };
 
   const handleTextChange = (inputText, type) => {
     setText({
@@ -70,25 +133,23 @@ const Home = props => {
     }
   };
 
-  React.useEffect(() => {
-    makeGetRequest();
-  }, []);
-
   const makeGetRequest = async () => {
+    console.log('makeGetRequest');
     try {
       const accessToken = await getAccessToken();
+      setPhone(`+91${accessToken?.phone}`);
+      setAccessToken(accessToken?.token);
       // console.log(accessToken);
       const url = 'http://13.126.244.224/api/user';
-      const phone = encodeURIComponent(`+91${accessToken?.phone}`);
+      const phoneUri = encodeURIComponent(`+91${accessToken?.phone}`);
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken?.token}`,
         },
       };
-
-      const response = await axios.get(`${url}?phone=${phone}`, config);
+      const response = await axios.get(`${url}?phone=${phoneUri}`, config);
       setUsername(response?.data?.data?.user?.username);
-      console.log('Response data:', response.data);
+      await getAllTasks(phoneUri, accessToken?.token);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -154,12 +215,12 @@ const Home = props => {
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
                                 }}>
-                                <Text style={styles.itemText}>{val.title}</Text>
+                                <Text style={styles.itemText}>{val?.name}</Text>
                                 <Image
                                   source={require('../../assets/notebook.png')}
                                 />
                               </View>
-                              <Text>{val.time}</Text>
+                              <Text>{val?.date_created}</Text>
                             </View>
                           </TouchableWithoutFeedback>
                         );

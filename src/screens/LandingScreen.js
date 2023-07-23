@@ -6,27 +6,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LandingScreen = props => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-
-  useEffect(() => {
-    checkSignInStatus();
-  }, []);
-
-  const checkSignInStatus = async () => {
-    try {
-      // Check if the user is signed in by verifying a token or other relevant data
-      const accessToken = await getAccessToken();
-      console.log(accessToken?.token, 'accessToken');
-      if (accessToken?.token) {
-        setIsSignedIn(true);
-        props.navigation.navigate('HomeScreen');
-      } else {
-        setIsSignedIn(false);
-      }
-    } catch (error) {
-      console.error('Error checking sign-in status:', error);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
