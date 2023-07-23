@@ -6,15 +6,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LandingScreen = props => {
-
   const checkSignInStatus = async () => {
     try {
       const accessToken = await getAccessToken();
       console.log(accessToken?.token, 'accessToken');
-      if(accessToken?.token) {
-        props.navigation.navigate("HomeScreen");
+      if (accessToken?.token) {
+        props.navigation.navigate('HomeScreen');
       } else {
-        props.navigation.navigate('SignupScreen')
+        props.navigation.navigate('SignupScreen');
       }
     } catch (error) {
       console.error('Error checking sign-in status:', error);
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
   },
   image: {
-    marginTop: H(10),
+    marginTop: H(5),
   },
   headText: {
     fontFamily: 'Poppins-Regular',
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
   },
   topView: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderBottomStartRadius: dimensions.width / 2,
     borderBottomEndRadius: dimensions.width / 2,
     width: '100%',

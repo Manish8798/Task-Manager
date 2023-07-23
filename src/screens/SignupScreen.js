@@ -12,6 +12,7 @@ import {Colors, getAccessToken, storeAccessToken} from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import {Input, Button} from '@rneui/themed';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 const SignupScreen = props => {
   const [text, setText] = React.useState({
@@ -40,6 +41,16 @@ const SignupScreen = props => {
     </Text>
   );
 
+  const showToast = (status, message) => {
+    Toast.show({
+      type: status, // 'info', 'error', or 'success'
+      text1: `${status}!`,
+      text2: message,
+      position: 'bottom', // 'top' or 'bottom'
+      visibilityTime: 2000, // Duration in milliseconds
+    });
+  };
+
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -56,9 +67,11 @@ const SignupScreen = props => {
       console.log('Response data:', response.data);
       if (response.data.code == '200') {
         setIsPressOTP(state => state + 1);
+        showToast('success', response.data.code);
       }
     } catch (error) {
       // Handle errors here
+      showToast('error', error);
       console.error('Error:', error);
     }
   };
@@ -83,9 +96,11 @@ const SignupScreen = props => {
         };
         const jsonString = JSON.stringify(data);
         storeAccessToken(jsonString);
+        showToast('success', response?.data?.code);
       }
     } catch (error) {
       // Handle errors here
+      showToast('error', error);
       console.error('Error:', error);
     }
   };
@@ -143,6 +158,13 @@ const SignupScreen = props => {
                 style={styles.input}
                 inputStyle={styles.inputStyle}
                 inputContainerStyle={styles.inputContainerStyle}
+                keyboardType={
+                  isPressOTP == 1
+                    ? 'phone-pad'
+                    : isPressOTP == 2
+                    ? 'number-pad'
+                    : 'default'
+                }
                 value={
                   isPressOTP == 1
                     ? text.phone
@@ -223,13 +245,15 @@ const styles = StyleSheet.create({
     borderTopWidth: dimensions.height / 4,
     borderRightWidth: dimensions.width,
     borderTopColor: 'transparent',
-    borderRightColor: 'white',
+    borderRightColor: '#fff',
+    marginBottom: -1,
   },
   squareView: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     height: '100%',
     padding: 40,
     alignItems: 'center',
+    marginTop: -1,
   },
   headText: {
     fontWeight: 'bold',
