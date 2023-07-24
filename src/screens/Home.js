@@ -73,10 +73,11 @@ const Home = props => {
     }
   };
 
-  const handleChangeValueAtIndex = async (index, newValue) => {
+  const handleChangeValueAtIndex = async (index, newPendingTasks) => {
     // console.log(index, newValue)
     // Create a copy of the original array to avoid directly mutating the state
-    const newData = [...newValue];
+    const tempTasks = newPendingTasks?.pendingTasks;
+    const newData = tempTasks ? [...tempTasks] : [...pendingTasks];
     newData[index] += 1;
     setPendingTasks(newData);
     let tasks = {
@@ -123,8 +124,7 @@ const Home = props => {
       const response = await axios.post(url, data, config);
       const dayNumber = getDayNumber();
       const newPendingTasks = await getTasks();
-      const tempTasks = newPendingTasks.pendingTasks;
-      handleChangeValueAtIndex(dayNumber - 1, tempTasks);
+      handleChangeValueAtIndex(dayNumber - 1, newPendingTasks);
       setIsCreateClicked(!isCreateClicked);
       const phoneUri = encodeURIComponent(phone);
       await getAllTasks(phoneUri, accessToken?.token);
