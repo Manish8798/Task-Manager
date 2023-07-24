@@ -1,5 +1,3 @@
-// ConsistencyGraph.js
-
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
@@ -7,7 +5,6 @@ import {Colors} from '../../util/Constant';
 import {H} from '../../util/Dimension';
 
 const ConsistencyGraph = props => {
-  // Sample data: Replace this with your actual data of completed and pending tasks per day
   const completedTasks = props?.completedTasks;
   const pendingTasks = props?.pendingTasks;
   // console.log(completedTasks, pendingTasks);
@@ -20,12 +17,12 @@ const ConsistencyGraph = props => {
     datasets: [
       {
         data: completedTasks,
-        color: (opacity = 1) => `rgba(27, 33, 181, ${opacity})`, // Green color for completed tasks
+        color: (opacity = 1) => `rgba(27, 33, 181, ${opacity})`, // Blue color for completed tasks
         strokeWidth: 2,
       },
       {
         data: pendingTasks,
-        color: (opacity = 1) => `rgba(253, 186, 93, ${opacity})`, // Red color for pending tasks
+        color: (opacity = 1) => `rgba(253, 186, 93, ${opacity})`, // Yellow color for pending tasks
         strokeWidth: 2,
       },
     ],

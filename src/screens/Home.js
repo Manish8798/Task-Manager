@@ -15,12 +15,15 @@ import {
   getAccessToken,
   getCurrentFormattedDate,
   getDayNumber,
+  storeTasks,
+  getTasks,
 } from '../../util/Constant';
 import LinearGradient from 'react-native-linear-gradient';
 import {Input, Button} from '@rneui/themed';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConsistencyGraph from '../components/ConsistencyGraph';
+import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
 const Home = props => {
@@ -33,6 +36,15 @@ const Home = props => {
   const [username, setUsername] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [accessToken, setAccessToken] = React.useState('');
+  const [taskCategory, setTaskCategory] = React.useState({
+    name: null,
+    index: null,
+  });
+  const iconList = [
+    {default: 'stopwatch-outline', sharp: 'stopwatch-sharp'},
+    {default: 'briefcase-outline', sharp: 'briefcase-sharp'},
+    {default: 'body-outline', sharp: 'body-sharp'},
+  ];
   const [completedTasks, setCompletedTasks] = React.useState([
     0, 0, 0, 0, 0, 0, 0,
   ]);
@@ -61,14 +73,36 @@ const Home = props => {
     }
   };
 
-  const handleChangeValueAtIndex = (index, newValue) => {
+  const handleChangeValueAtIndex = async (index, newValue) => {
+    // console.log(index, newValue)
     // Create a copy of the original array to avoid directly mutating the state
-    const newData = [...pendingTasks];
-    newData[index] = newValue;
+    const newData = [...newValue];
+    newData[index] += 1;
     setPendingTasks(newData);
+    let tasks = {
+      pendingTasks: newData,
+      completedTasks: completedTasks,
+    };
+    // console.log(newData);
+    tasks = JSON.stringify(tasks);
+    await storeTasks(tasks);
+  };
+
+  const showToast = (status, message) => {
+    Toast.show({
+      type: status, // 'info', 'error', or 'success'
+      text1: `${message}!`,
+      // text2: message,
+      position: 'bottom', // 'top' or 'bottom'
+      visibilityTime: 2000, // Duration in milliseconds
+    });
   };
 
   const saveTask = async () => {
+    if (text?.title?.trim() == '' || text?.title?.length < 3) {
+      showToast('error', 'Title should contain atleast 3 characters');
+      return;
+    }
     try {
       const accessToken = await getAccessToken();
       const url = 'http://13.126.244.224/api/task';
@@ -76,7 +110,7 @@ const Home = props => {
         phone: phone,
         name: text?.title,
         details: text?.description,
-        category: 'work',
+        category: taskCategory?.name,
         expiry_date: getCurrentFormattedDate(),
       };
       const config = {
@@ -85,9 +119,12 @@ const Home = props => {
           'Content-Type': 'application/json',
         },
       };
+      console.log('saveTask', data);
       const response = await axios.post(url, data, config);
       const dayNumber = getDayNumber();
-      handleChangeValueAtIndex(dayNumber - 1, pendingTasks[dayNumber] + 1);
+      const newPendingTasks = await getTasks();
+      const tempTasks = newPendingTasks.pendingTasks;
+      handleChangeValueAtIndex(dayNumber - 1, tempTasks);
       setIsCreateClicked(!isCreateClicked);
       const phoneUri = encodeURIComponent(phone);
       await getAllTasks(phoneUri, accessToken?.token);
@@ -108,7 +145,7 @@ const Home = props => {
       };
       const response = await axios.get(`${url}?phone=${phone}`, config);
       // Process the response data here
-      console.log('getAllTasks data:', response.data);
+      // console.log('getAllTasks data:', response.data);
       if (response.data.code == '200') {
         setTasks(response?.data?.data?.task);
       }
@@ -167,6 +204,18 @@ const Home = props => {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const onPressCategory = (name, index) => {
+    setTaskCategory({
+      name:
+        name == 'stopwatch-outline'
+          ? 'work'
+          : name == 'briefcase-outline'
+          ? 'work'
+          : 'personal',
+      index: index,
+    });
   };
 
   return (
@@ -289,12 +338,16 @@ const Home = props => {
                   multiline={true}
                 />
                 <View style={[styles.formatContainer, {width: '80%'}]}>
-                  {[
-                    'stopwatch-outline',
-                    'briefcase-outline',
-                    'body-outline',
-                  ].map((name, i) => (
-                    <Ionicons key={i} name={name} size={32} />
+                  {iconList.map((name, i) => (
+                    <Ionicons
+                      key={i}
+                      color={
+                        taskCategory.index == i ? 'green' : Colors.IconColor
+                      }
+                      name={taskCategory.index == i ? name.sharp : name.default}
+                      size={32}
+                      onPress={() => onPressCategory(name.default, i)}
+                    />
                   ))}
                   {/* <Ionicons name="stopwatch-outline" size={32} />
                   <Ionicons name="briefcase-outline" size={32} />

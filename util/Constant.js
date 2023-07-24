@@ -10,6 +10,7 @@ export const Colors = {
   FadeText: '#D9D9D9',
   BackgroundColor: '#FAFAFA',
   Yellow: '#FDBA5D',
+  IconColor: "#526066"
 };
 
 export function getCurrentLocalTime() {
@@ -32,6 +33,26 @@ export const getAccessToken = async () => {
     return accessToken;
   } catch (error) {
     console.error('Error getting access token:', error);
+    return null;
+  }
+};
+
+export const storeTasks = async tasks => {
+  try {
+    await AsyncStorage.setItem('@tasks', tasks);
+    console.log('Tasks stored successfully.');
+  } catch (error) {
+    console.error('Error storing tasks:', error);
+  }
+};
+
+export const getTasks = async () => {
+  try {
+    let tasks = await AsyncStorage.getItem('@tasks');
+    tasks = JSON.parse(tasks);
+    return tasks;
+  } catch (error) {
+    console.error('Error in getting tasks:', error);
     return null;
   }
 };
