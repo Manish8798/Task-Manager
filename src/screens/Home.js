@@ -246,7 +246,7 @@ const Home = props => {
                     }}
                     titleStyle={{fontWeight: 'bold', fontSize: 24}}
                     containerStyle={{
-                      height: H(6),
+                      height: H(7),
                       width: '80%',
                       marginVertical: H(4),
                       alignSelf: 'center',
@@ -286,7 +286,7 @@ const Home = props => {
                                   source={require('../../assets/notebook.png')}
                                 />
                               </View>
-                              <Text>{val?.date_created}</Text>
+                              <Text style={{color: 'gray'}}>{val?.date_created}</Text>
                             </View>
                           </TouchableWithoutFeedback>
                         );
@@ -318,6 +318,7 @@ const Home = props => {
                       key={i}
                       name={name}
                       size={32}
+                      color={'grey'}
                       onPress={() => console.log(name)}
                     />
                   ))}
@@ -361,7 +362,7 @@ const Home = props => {
                   }}
                   titleStyle={{fontWeight: 'bold', fontSize: 24}}
                   containerStyle={{
-                    height: H(6),
+                    height: H(7),
                     width: '60%',
                     marginVertical: H(4),
                     alignSelf: 'center',
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '80%',
-    height: H(7),
+    height: H(8),
     padding: 20,
     alignSelf: 'center',
     backgroundColor: 'white',
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     width: '55%',
     alignSelf: 'center',
-    height: H(7),
+    height: H(8),
   },
   listContainer: {
     alignSelf: 'center',
