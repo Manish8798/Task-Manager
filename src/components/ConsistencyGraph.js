@@ -61,7 +61,7 @@ const ConsistencyGraph = props => {
               borderRadius: H(2) / 2,
               marginHorizontal: 5,
             }}></View>
-          <Text style={{marginHorizontal: 5}}>{'Completed'}</Text>
+          <Text style={{marginHorizontal: 5, color: 'gray'}}>{'Completed'}</Text>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View
@@ -72,7 +72,7 @@ const ConsistencyGraph = props => {
               borderRadius: H(2) / 2,
               marginHorizontal: 5,
             }}></View>
-          <Text style={{marginHorizontal: 5}}>{'Pending'}</Text>
+          <Text style={{marginHorizontal: 5, color: 'gray'}}>{'Pending'}</Text>
         </View>
       </View>
     </View>
